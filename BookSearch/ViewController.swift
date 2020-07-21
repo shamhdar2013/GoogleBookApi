@@ -37,34 +37,34 @@ class ViewController: UIViewController {
         BooksDataManager.sharedInstance.getBooksFromStore(category:category) { (array, error) in
             if let bookarr = array, !bookarr.isEmpty {
                 DispatchQueue.main.async {
-                    self.books = array!
+                    self.books = bookarr
                     self.bookTableView.reloadData()
                 }
             } else {
                 
-                BooksFetcher.getVolumesFor(category: category) { (array, error) in
+                BooksFetcher.getVolumesFor(category: category) { [weak self] (array, error) in
                     
-                    if  array != nil {
-                        DispatchQueue.main.async {
-                            self.books = array!
-                            self.bookTableView.reloadData()
-                        }
-                        
-                        DispatchQueue.global().async{
-                            BooksFetcher.getBookThumbnails(books: array!) { (bkArray, success) in
-                                DispatchQueue.main.async {
-                                    self.books = bkArray
-                                    self.bookTableView.reloadData()
-                                }
+                    guard let array = array else { return }
+                    
+                    DispatchQueue.main.async {
+                        self?.books = array
+                        self?.bookTableView.reloadData()
+                    }
+                    
+                    DispatchQueue.global().async{
+                        BooksFetcher.getBookThumbnails(books: array) { (bkArray, success) in
+                            DispatchQueue.main.async {
+                                self?.books = bkArray
+                                self?.bookTableView.reloadData()
                             }
-                        }//Dispatch.global
-                    }//array != nil
-                }//getVolumesFor
-            }//else array
-        }
+                        }
+                    }//Dispatch.global
+                }//array != nil
+            }//getVolumesFor
+        }//else array
     }
-
 }
+
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -78,8 +78,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? BookTableViewCell  else {
             fatalError("The dequeued cell is not an instance of BookTableViewCell.")
         }
-        let row = indexPath.row
-        cell.configure(book: self.books[row], item: row)
+   
+        cell.configure(book: self.books[indexPath.row], item: indexPath.row)
         return cell
     }
     

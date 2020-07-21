@@ -43,7 +43,7 @@ class BooksDataManager: NSObject {
         
     }
         
-    func saveContext () {
+    func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
@@ -70,27 +70,11 @@ class BooksDataManager: NSObject {
                 var resultArray = [BookViewModel] ()
                 for data in resArray as! [NSManagedObject] {
                     if let book = data as? Books {
-                        var bookTtl  = DefaultData.defaultTitle.rawValue
-                        var bookId = DefaultData.defaultIdentifier.rawValue
-                        var bookAuth  = DefaultData.defaultAuthor.rawValue
-                        var bookPub = DefaultData.defaultPublisher.rawValue
-                        
-                        if let bkid = book.identifier {
-                            bookId = bkid
-                        }
-                        
-                        if let bkttl = book.title {
-                            bookTtl = bkttl
-                        }
-                        
-                        if let bkath = book.author {
-                            bookAuth = bkath
-                        }
-                        
-                        if let bkpb = book.publisher {
-                            bookPub = bkpb
-                        }
-                        
+                        let bookTtl  = book.title ?? DefaultData.defaultTitle.rawValue
+                        let bookId = book.identifier ?? DefaultData.defaultIdentifier.rawValue
+                        let bookAuth  = book.author ?? DefaultData.defaultAuthor.rawValue
+                        let bookPub = book.publisher ?? DefaultData.defaultPublisher.rawValue
+                       
                         let bookModel = BookViewModel(identifier:bookId, title: bookTtl, author: bookAuth, publisher: bookPub)
                         bookModel.subtitle = book.subtitle ?? " "
                         

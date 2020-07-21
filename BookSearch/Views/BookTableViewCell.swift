@@ -25,7 +25,7 @@ class BookTableViewCell: UITableViewCell {
     }
     
     func configure(book: BookViewModel, item: Int) {
-        self.bookCoverView.image = book.thumbnail ?? UIImage(named:"BookCobver")
+        self.bookCoverView.image = book.thumbnail ?? UIImage(named:"BookCover")
         self.titleLabel.text = book.title
         self.authorLabel.text = String(format:"By: %@", book.authors)
     }
